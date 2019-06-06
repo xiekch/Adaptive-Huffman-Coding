@@ -4,7 +4,7 @@ from queue import Queue
 
 class HuffmanTree:
     def __init__(self):
-        self.root = Node(0)
+        self.root = Node()
         self.bytes = [None for i in range(256)]
         self.emptyNode = self.root
 
@@ -12,39 +12,40 @@ class HuffmanTree:
         return self.bytes[char] != None
 
     def addChar(self, char):
-        node = Node(0)
+        node = Node(char)
         self.bytes[char] = node
-        self.emptyNode.setLeft(Node(0))
+        self.emptyNode.setLeft(Node())
         self.emptyNode.setRight(node)
         self.emptyNode = self.emptyNode.left
 
+# encode
     def encode(self, char):
-        code = self.getCode(char)
         if not self.exist(char):
+            code = self.huffmanCode(self.emptyNode)
+            code += '{0:08b}'.format(char)  # binary
             self.addChar(char)
+        else:
+            node = self.bytes[char]
+            code = self.huffmanCode(node)
+
         self.updateTree(self.bytes[char])
         return code
 
-    def getCode(self, char):
+    def endOfFile(self):
+        return self.huffmanCode(self.emptyNode)
+
+    def huffmanCode(self, node):
         code = ''
-        if not self.exist(char):
-            while char:
-                if char & 1:
-                    code += '1'
-                else:
-                    code += '0'
-                char = char >> 1
-        else:
-            node = self.bytes[char]
-            while True:
-                child = node
-                node = node.parent
-                if not node:
-                    break
-                if node.left == child:
-                    code += '0'
-                else:
-                    code += '1'
+        if node == self.root:
+            return '0'
+        parent = node.parent
+        while parent:
+            if parent.left == node:
+                code += '0'
+            else:
+                code +='1'
+            node = parent
+            parent = node.parent
 
         return code[::-1]  # reverse
 
@@ -60,19 +61,42 @@ class HuffmanTree:
             if node.left:
                 q.put(node.left)
 
-    def swap(self, node1, node2):
-        if node1 == node2 or node1.isAncestor(node2) or node2.isAncestor(node1):
-            return
-        parent1 = node1.parent
-        parent2 = node2.parent
-        parent2.replaceChild(node2, node1)
-        parent1.replaceChild(node1, node2)
-
     def updateTree(self, node):
         while node:
-            self.swap(node, self.findFarthestNode(node.weight))
+            node.swap(self.findFarthestNode(node.weight))
             node.weight += 1
             node = node.parent
+
+
+# decode
+    def decode(self, file):
+        node = self.reHuffmanCode(file)
+        if node == self.emptyNode:
+            code = file.read(8)
+            if code == '':
+                return '', False
+            # or end of the file
+            char = int(code, 2)
+            self.addChar(char)
+        else:
+            char = node.char
+        self.updateTree(self.bytes[char])
+        return chr(char), True
+
+    def reHuffmanCode(self, file):
+        if self.root.hasNoChild():
+            file.read(1)
+            return self.root
+
+        node = self.root
+        while not node.hasNoChild():
+            ch = file.read(1)
+            if ch =='1':
+                node = node.right
+            elif ch == '0':
+                node = node.left
+
+        return node
 
     def printTree(self):
         print('------tree------')
@@ -84,7 +108,7 @@ class HuffmanTree:
             if node.level > level:
                 level = node.level
                 print()
-            print('%s:%s' % (node.weight, node.level), end=' ')
+            print('%s:%s' % (node.weight, chr(node.char or ord('*'))), end=' ')
             if node.left:
                 q.put(node.left)
             if node.right:

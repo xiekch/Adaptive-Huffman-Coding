@@ -3,28 +3,30 @@ from bitStream import BitStream
 from huffmanTree import HuffmanTree
 
 
-class Encoder:
+class Decoder:
     def __init__(self):
         self.tree = HuffmanTree()
         pass
 
-    def encodeFile(self, fileName,outFileName):
+    def decodeFile(self, fileName, outFileName):
         if not os.path.exists(fileName):
             print('File doesnt exist.')
             return
         readFile = open(fileName, 'rb')
         writeFile = open(outFileName, 'wb')
-        c = readFile.read(1)
-        while c:
-            code = self.tree.encode(c[0])
-            writeFile.write(code.encode())
-            c = readFile.read(1)
+        running=True
+        while True:
+            char,running = self.tree.decode(readFile)
+            if not running:
+                break
+            writeFile.write(char.encode())
+            writeFile.flush()
             # self.tree.printTree()
-        writeFile.write(self.tree.endOfFile().encode())
+        
         readFile.close()
         writeFile.close()
 
 
 if __name__ == '__main__':
-    encoder = Encoder()
-    encoder.encodeFile('./test.py','./code.txt')
+    decoder = Decoder()
+    decoder.decodeFile('./code.txt', './decode.txt')
