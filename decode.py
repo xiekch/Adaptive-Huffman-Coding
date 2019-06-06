@@ -12,21 +12,21 @@ class Decoder:
         if not os.path.exists(fileName):
             print('File doesnt exist.')
             return
-        readFile = open(fileName, 'rb')
+        readFile = BitStream(fileName, 'rb')
         writeFile = open(outFileName, 'wb')
-        running=True
+        running = True
         while True:
-            char,running = self.tree.decode(readFile)
+            char, running = self.tree.decode(readFile)
             if not running:
                 break
-            writeFile.write(char.encode())
+            writeFile.write(char)
             writeFile.flush()
             # self.tree.printTree()
-        
+
         readFile.close()
         writeFile.close()
 
 
 if __name__ == '__main__':
     decoder = Decoder()
-    decoder.decodeFile('./code.txt', './decode.txt')
+    decoder.decodeFile('./code.txt', './decode.jpg')

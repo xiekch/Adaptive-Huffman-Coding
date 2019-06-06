@@ -81,7 +81,7 @@ class HuffmanTree:
         else:
             char = node.char
         self.updateTree(self.bytes[char])
-        return chr(char), True
+        return char.to_bytes(1, byteorder='little'), True
 
     def reHuffmanCode(self, file):
         if self.root.hasNoChild():
