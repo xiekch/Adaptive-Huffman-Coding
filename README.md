@@ -1,6 +1,6 @@
 # 数字媒体作业二
 
-谢昆成
+谢昆成 16327109
 
 ## 实验题目
 
@@ -28,7 +28,7 @@ Initial_code();
 while not EOF{
     decode(c);
     output(c);
-	update_tree(c);
+    update_tree(c);
 }
 ```
 

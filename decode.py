@@ -13,11 +13,10 @@ class Decoder:
             return
         readFile = BitStream(fileName, 'rb')
         writeFile = open(outFileName, 'wb')
-        running = True
-        self.tree.counter=int(readFile.read(32),2)
+        self.tree.counter = int(readFile.read(32), 2)
         while True:
-            char, running = self.tree.decode(readFile)
-            if not running:
+            char = self.tree.decode(readFile)
+            if not char:
                 break
             writeFile.write(char)
             # writeFile.flush()

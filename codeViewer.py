@@ -1,9 +1,10 @@
 import os
 from bitStream import BitStream
 
+
 class Viewer:
     def __init__(self):
-        pass    
+        pass
 
     def view(self, fileName):
         if not os.path.exists(fileName):
@@ -19,5 +20,5 @@ class Viewer:
 
 
 if __name__ == '__main__':
-    viewer=Viewer()
+    viewer = Viewer()
     viewer.view('./code.txt')

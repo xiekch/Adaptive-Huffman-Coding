@@ -13,15 +13,14 @@ class Encoder:
             return
         readFile = open(fileName, 'rb')
         writeFile = BitStream(outFileName, 'wb')
+        # the size of file
         writeFile.write('{0:032b}'.format(os.stat(fileName).st_size))
-        running = True
         while True:
-            code, running = self.tree.encode(readFile)
-            if not running:
+            code = self.tree.encode(readFile)
+            if not code:
                 break
             writeFile.write(code)
 
-        # writeFile.write(self.tree.endOfFile())
         self.tree.printTree()
         readFile.close()
         writeFile.close()
@@ -29,4 +28,4 @@ class Encoder:
 
 if __name__ == '__main__':
     encoder = Encoder()
-    encoder.encodeFile('./test.txt', './code.txt')
+    encoder.encodeFile('./readme.md', './code.txt')
