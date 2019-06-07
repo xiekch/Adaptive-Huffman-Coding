@@ -6,7 +6,6 @@ from huffmanTree import HuffmanTree
 class Encoder:
     def __init__(self):
         self.tree = HuffmanTree()
-        pass
 
     def encodeFile(self, fileName, outFileName):
         if not os.path.exists(fileName):

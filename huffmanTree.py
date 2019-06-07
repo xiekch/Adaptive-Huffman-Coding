@@ -108,7 +108,7 @@ class HuffmanTree:
             if node.level > level:
                 level = node.level
                 print()
-            print('%s:%s' % (node.weight, chr(node.char or ord('*'))), end=' ')
+            print('%s:%s' % (node.weight, chr(node.char).encode('latin1')), end=' ')
             if node.left:
                 q.put(node.left)
             if node.right:

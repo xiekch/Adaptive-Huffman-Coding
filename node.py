@@ -5,23 +5,33 @@ class Node:
         self.right = None
         self.left = None
         self.level = 0
-        self.char=char
+        if char == None:
+            self.char = ord('*')
+        else:
+            self.char = char
 
     def setLeft(self, node):
         self.left = node
         node.parent = self
-        node.level = self.level+1
+        node.updateLevel()
 
     def setRight(self, node):
         self.right = node
         node.parent = self
-        node.level = self.level+1
+        node.updateLevel()
 
     def replaceChild(self, child, node):
         if self.left == child:
             self.setLeft(node)
         elif self.right == child:
             self.setRight(node)
+
+    def updateLevel(self):
+        self.level = self.parent.level+1
+        if self.right:
+            self.right.updateLevel()
+        if self.left:
+            self.left.updateLevel()
 
     def hasNoChild(self):
         return self.left == None and self.right == None

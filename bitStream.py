@@ -57,6 +57,7 @@ class BitStream:
         self.pos = 7
 
 
+# test
 if __name__ == '__main__':
     file = BitStream('./test.txt', 'rb')
     writeFile = BitStream('./temp.txt', 'wb')

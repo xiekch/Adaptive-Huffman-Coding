@@ -6,7 +6,6 @@ from huffmanTree import HuffmanTree
 class Decoder:
     def __init__(self):
         self.tree = HuffmanTree()
-        pass
 
     def decodeFile(self, fileName, outFileName):
         if not os.path.exists(fileName):
@@ -20,7 +19,6 @@ class Decoder:
             if not running:
                 break
             writeFile.write(char)
-            writeFile.flush()
             # self.tree.printTree()
 
         readFile.close()
@@ -29,4 +27,4 @@ class Decoder:
 
 if __name__ == '__main__':
     decoder = Decoder()
-    decoder.decodeFile('./code.txt', './decode.jpg')
+    decoder.decodeFile('./code.txt', './decode.txt')
