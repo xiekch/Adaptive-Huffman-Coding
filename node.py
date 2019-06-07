@@ -6,7 +6,7 @@ class Node:
         self.left = None
         self.level = 0
         if char == None:
-            self.char = ord('*')
+            self.char = b'*'
         else:
             self.char = char
 

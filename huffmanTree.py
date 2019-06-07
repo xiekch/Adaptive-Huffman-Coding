@@ -3,13 +3,15 @@ from queue import Queue
 
 
 class HuffmanTree:
-    def __init__(self):
+    def __init__(self,order=1):
         self.root = Node()
-        self.bytes = [None for i in range(256)]
+        self.bytes = {}
         self.emptyNode = self.root
+        self.order=order
+        self.counter=0
 
     def exist(self, char):
-        return self.bytes[char] != None
+        return char in self.bytes
 
     def addChar(self, char):
         node = Node(char)
@@ -19,17 +21,26 @@ class HuffmanTree:
         self.emptyNode = self.emptyNode.left
 
 # encode
-    def encode(self, char):
+    def encode(self, file):
+        char=b''
+        # for i in range(self.order):
+        #     ch=file.read(2)
+        #     char+=ch
+        char=file.read(self.order)
+        if char==b'':
+            return b'',False
+
         if not self.exist(char):
             code = self.huffmanCode(self.emptyNode)
-            code += '{0:08b}'.format(char)  # binary
+            for i in range(len(char)):
+                code += '{0:08b}'.format(char[i])  # binary
             self.addChar(char)
         else:
             node = self.bytes[char]
             code = self.huffmanCode(node)
 
         self.updateTree(self.bytes[char])
-        return code
+        return code,True
 
     def endOfFile(self):
         return self.huffmanCode(self.emptyNode)
@@ -54,7 +65,7 @@ class HuffmanTree:
         q.put(self.root)
         while not q.empty():
             node = q.get()
-            if node.weight == weight:  # and node.hasNoChild():
+            if node.weight == weight:
                 return node
             if node.right:
                 q.put(node.right)
@@ -70,18 +81,26 @@ class HuffmanTree:
 
 # decode
     def decode(self, file):
+        if self.counter<=0:
+            return '', False
         node = self.reHuffmanCode(file)
         if node == self.emptyNode:
-            code = file.read(8)
-            if code == '':
-                return '', False
+            code=''
+            for i in range(self.order):
+                code += file.read(8)
+            # if code == '':
+            #     return '', False
             # or end of the file
-            char = int(code, 2)
+            char=b''
+            for i in range(int(len(code)/8)):
+                ch=int(code[i*8:i*8+8],2)
+                char+=ch.to_bytes(1,byteorder='little')
             self.addChar(char)
         else:
             char = node.char
         self.updateTree(self.bytes[char])
-        return char.to_bytes(1, byteorder='little'), True
+        self.counter-=len(char)
+        return char, True
 
     def reHuffmanCode(self, file):
         if self.root.hasNoChild():
@@ -95,6 +114,8 @@ class HuffmanTree:
                 node = node.right
             elif ch == '0':
                 node = node.left
+            else:
+                return self.emptyNode
 
         return node
 
@@ -108,7 +129,7 @@ class HuffmanTree:
             if node.level > level:
                 level = node.level
                 print()
-            print('%s:%s' % (node.weight, chr(node.char).encode('latin1')), end=' ')
+            print('%s:%s' % (node.weight, str(node.char)), end=' ')
             if node.left:
                 q.put(node.left)
             if node.right:

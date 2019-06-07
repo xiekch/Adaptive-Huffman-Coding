@@ -5,7 +5,7 @@ from huffmanTree import HuffmanTree
 
 class Encoder:
     def __init__(self):
-        self.tree = HuffmanTree()
+        self.tree = HuffmanTree(1)
 
     def encodeFile(self, fileName, outFileName):
         if not os.path.exists(fileName):
@@ -13,17 +13,20 @@ class Encoder:
             return
         readFile = open(fileName, 'rb')
         writeFile = BitStream(outFileName, 'wb')
-        c = readFile.read(1)
-        while c:
-            code = self.tree.encode(c[0])
+        writeFile.write('{0:032b}'.format(os.stat(fileName).st_size))
+        running = True
+        while True:
+            code, running = self.tree.encode(readFile)
+            if not running:
+                break
             writeFile.write(code)
-            c = readFile.read(1)
-            # self.tree.printTree()
-        writeFile.write(self.tree.endOfFile())
+
+        # writeFile.write(self.tree.endOfFile())
+        self.tree.printTree()
         readFile.close()
         writeFile.close()
 
 
 if __name__ == '__main__':
     encoder = Encoder()
-    encoder.encodeFile('./test.jpg', './code.txt')
+    encoder.encodeFile('./test.txt', './code.txt')

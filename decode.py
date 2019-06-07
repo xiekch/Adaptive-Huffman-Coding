@@ -5,7 +5,7 @@ from huffmanTree import HuffmanTree
 
 class Decoder:
     def __init__(self):
-        self.tree = HuffmanTree()
+        self.tree = HuffmanTree(1)
 
     def decodeFile(self, fileName, outFileName):
         if not os.path.exists(fileName):
@@ -14,11 +14,13 @@ class Decoder:
         readFile = BitStream(fileName, 'rb')
         writeFile = open(outFileName, 'wb')
         running = True
+        self.tree.counter=int(readFile.read(32),2)
         while True:
             char, running = self.tree.decode(readFile)
             if not running:
                 break
             writeFile.write(char)
+            # writeFile.flush()
             # self.tree.printTree()
 
         readFile.close()
